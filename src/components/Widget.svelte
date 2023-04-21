@@ -3,18 +3,22 @@
   import SlopeChart from './SlopeChart.svelte';
   import ShapTable from './ShapTable.svelte';
   import { height } from '../stores';
-  let difference = 0;
-  function onChangeDifference(event){
-    difference = event.detail;
-  }
+  let slopeChartWidth = 0;
+  let slopeChartHeight = 0;
 </script>
 
 <div class="svelte-widget-container" style:height="{$height}px">
-  <div>
-    <Filter on:filter={onChangeDifference}/>
+  <div class="filter-and-table">
+    <Filter />
     <ShapTable />
   </div>
-  <SlopeChart width={$height} height={$height} {difference} />
+  <div
+    class="slope-chart"
+    bind:clientWidth={slopeChartWidth}
+    bind:clientHeight={slopeChartHeight}
+  >
+    <SlopeChart width={slopeChartWidth} height={slopeChartHeight} />
+  </div>
 </div>
 
 <style>
@@ -28,5 +32,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 1em;
+  }
+  .filter-and-table {
+    flex: 1;
+    min-width: 0;
+  }
+  .slope-chart {
+    flex: 1;
+    height: 100%;
   }
 </style>

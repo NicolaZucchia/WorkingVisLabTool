@@ -1,20 +1,32 @@
 <script lang="ts">
-    import { predictions, minPrediction, maxPrediction, size } from '../stores';
-      import { createEventDispatcher } from 'svelte';
-  
-      const dispatch = createEventDispatcher();
-    let difference = 0; 
-    function onFilter() {
-      dispatch('filter',difference);
-    }
-  </script>
-  
-  <div>
-    <label>
-      Difference
-      <input type="number" bind:value={difference}/>
-    </label>
-    <button on:click={onFilter}>
-      Filter
-    </button>
-  </div>
+  import {
+    predictions,
+    size,
+    filteredIndices,
+    minPredictionDifference,
+    model1BrushedExtent,
+    model2BrushedExtent,
+  } from '../stores';
+  import { getFilteredIndices } from '../utils';
+
+  let difference = 0;
+
+  function onFilter() {
+    $minPredictionDifference = difference;
+    $filteredIndices = getFilteredIndices(
+      $size,
+      $minPredictionDifference,
+      $model1BrushedExtent,
+      $model2BrushedExtent,
+      $predictions
+    );
+  }
+</script>
+
+<div>
+  <label>
+    Difference
+    <input type="number" bind:value={difference} />
+  </label>
+  <button on:click={onFilter}> Filter </button>
+</div>

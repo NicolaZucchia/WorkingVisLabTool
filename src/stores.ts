@@ -1,6 +1,7 @@
 import { writable, derived } from 'svelte/store';
 import type { Writable, Readable } from 'svelte/store';
 import type { DOMWidgetModel } from '@jupyter-widgets/base';
+import { range } from 'd3-array';
 
 /**
  * Adapted from https://github.com/cabreraalex/widget-svelte-cookiecutter
@@ -60,6 +61,10 @@ export let shap1: Writable<number[][]>;
 export let shap2: Writable<number[][]>;
 export let shapD: Writable<number[][]>;
 export let features: Writable<string[]>;
+export let filteredIndices: Writable<number[]>;
+export let minPredictionDifference: Writable<number>;
+export let model1BrushedExtent: Writable<[number, number]>;
+export let model2BrushedExtent: Writable<[number, number]>;
 
 /**
  * Note that when the cell containing the widget is re-run, a new model is
@@ -103,4 +108,8 @@ export function setStores(model: DOMWidgetModel): void {
   maxPrediction = derived(predictions, ($predictions) =>
     Math.max(...$predictions[0], ...$predictions[1])
   );
+  filteredIndices = writable(range(model.get("size")));
+  minPredictionDifference = writable(0);
+  model1BrushedExtent = writable([-Infinity,Infinity])
+  model2BrushedExtent = writable([-Infinity,Infinity]);
 }
