@@ -51,7 +51,7 @@ function createSyncedWidget<T>(
   };
 }
 
-export let df: Writable<Record<string, number[]>>;
+export let dataset: Writable<Record<string, number[]>>;
 export let predictions: Writable<[number[], number[]]>;
 export let height: Writable<number>;
 export let minPrediction: Readable<number>;
@@ -74,7 +74,7 @@ export let model2BrushedExtent: Writable<[number, number]>;
  * @param model backbone model that contains state synced between Python and JS
  */
 export function setStores(model: DOMWidgetModel): void {
-  df = createSyncedWidget<Record<string, number[]>>('df', {}, model);
+  dataset = createSyncedWidget<Record<string, number[]>>('df', {}, model);
   predictions = createSyncedWidget<[number[], number[]]>(
     'predictions',
     [[], []],

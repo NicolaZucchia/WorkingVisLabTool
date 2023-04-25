@@ -44,7 +44,7 @@
         y1={y($predictions[0][i])}
         y2={y($predictions[1][i])}
         fill="none"
-        stroke={'black'}
+        stroke={'grey'}
       />
     {/each}
   </g>

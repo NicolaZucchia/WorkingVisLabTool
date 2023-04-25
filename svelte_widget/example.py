@@ -11,7 +11,7 @@ TODO: Add module docstring
 from ipywidgets import DOMWidget
 from traitlets import Unicode, Int, Dict, List
 from ._frontend import module_name, module_version
-from .modelProcessing import getPredictions, calculateShaps
+from .newModelProcessing import getPredictions, calculateShaps
 
 class ExampleWidget(DOMWidget):
     """TODO: Add docstring here"""
@@ -25,7 +25,7 @@ class ExampleWidget(DOMWidget):
 
     # widget state that is synced between Python and JavaScript
 
-    df = Dict({}).tag(sync=True)
+    dataset = Dict({}).tag(sync=True)
     predictions = List([[],[]]).tag(sync=True)
     height = Int(0).tag(sync=True)  
     size = Int(0).tag(sync=True)
@@ -38,7 +38,8 @@ class ExampleWidget(DOMWidget):
     def __init__(self, df, model1, model2, height=600, **kwargs):
         super().__init__(**kwargs)
 
-        self.df = df.to_dict(orient='list')
+        self.df = df
+        self.dataset = df.to_dict(orient='list')
         self.height = height
         self.size = df.shape[0]
         self.model1 = model1
