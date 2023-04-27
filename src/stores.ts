@@ -2,6 +2,7 @@ import { writable, derived } from 'svelte/store';
 import type { Writable, Readable } from 'svelte/store';
 import type { DOMWidgetModel } from '@jupyter-widgets/base';
 import { range } from 'd3-array';
+import type { ShapValues } from './types';
 
 /**
  * Adapted from https://github.com/cabreraalex/widget-svelte-cookiecutter
@@ -57,9 +58,9 @@ export let height: Writable<number>;
 export let minPrediction: Readable<number>;
 export let maxPrediction: Readable<number>;
 export let size: Writable<number>;
-export let shap1: Writable<number[][]>;
-export let shap2: Writable<number[][]>;
-export let shapD: Writable<number[][]>;
+export let shap1: Writable<ShapValues[]>;
+export let shap2: Writable<ShapValues[]>;
+export let shapD: Writable<ShapValues[]>;
 export let features: Writable<string[]>;
 export let filteredIndices: Writable<number[]>;
 export let minPredictionDifference: Writable<number>;
@@ -80,17 +81,17 @@ export function setStores(model: DOMWidgetModel): void {
     [[], []],
     model
   );
-  shap1 = createSyncedWidget<number[][]>(
+  shap1 = createSyncedWidget<ShapValues[]>(
     'shap1',
     [],
     model
   );
-  shap2 = createSyncedWidget<number[][]>(
+  shap2 = createSyncedWidget<ShapValues[]>(
     'shap2',
     [],
     model
   );
-  shapD = createSyncedWidget<number[][]>(
+  shapD = createSyncedWidget<ShapValues[]>(
     'shapD',
     [],
     model

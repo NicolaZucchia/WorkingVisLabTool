@@ -3,7 +3,6 @@
     predictions,
     minPrediction,
     maxPrediction,
-    filteredIndices,
     size,
     minPredictionDifference,
   } from '../stores';
@@ -45,6 +44,7 @@
         y2={y($predictions[1][i])}
         fill="none"
         stroke={'grey'}
+        opacity={'0.5'}
       />
     {/each}
   </g>

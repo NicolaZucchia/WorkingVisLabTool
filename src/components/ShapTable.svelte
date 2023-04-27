@@ -8,13 +8,27 @@
   import RowCount from './RowCount.svelte';
   import Pagination from './Pagination.svelte';
   import Filter from './Filter.svelte';
+  import { descending } from 'd3-array';
   let selectedShapValues = $shapD;
-  $: filteredSelectedShapValues = $filteredIndices.map(
-    (i) => selectedShapValues[i]
-  );
-  $: handler = new DataHandler(filteredSelectedShapValues, { rowsPerPage: 15 });
+
+  $: filteredSelectedShapValues = $filteredIndices
+    .map((i) => selectedShapValues[i])
+    .sort((a, b) => descending(a.shapAbsSum, b.shapAbsSum));
+
+  function featureAbsContribution(instances) {
+    let colTotSum = new Array($features.length).fill(0);
+    for (let i = 0; i < instances.length; i++) {
+      for (let j = 0; j < $features.length; j++) {
+        colTotSum[j] = colTotSum[j] + Math.abs(instances[i][j]);
+      }
+    }
+    return colTotSum;
+  }
+
+  $: shapVar = filteredSelectedShapValues.map((d) => d.shap);
+  $: handler = new DataHandler(shapVar, { rowsPerPage: 15 });
   $: rows = handler.getRows();
-  $: absMaxShap = max(selectedShapValues.flat(), (d) => Math.abs(d)) ?? 0;
+  $: absMaxShap = max(shapVar.flat(), (d) => Math.abs(d)) ?? 0;
   $: color = scaleDiverging()
     .domain([-absMaxShap, 0, absMaxShap])
     .interpolator(interpolateRdYlGn);
