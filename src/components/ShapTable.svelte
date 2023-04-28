@@ -8,21 +8,29 @@
   import RowCount from './RowCount.svelte';
   import Pagination from './Pagination.svelte';
   import Filter from './Filter.svelte';
-  import { descending } from 'd3-array';
+  import { descending, sum } from 'd3-array';
   let selectedShapValues = $shapD;
-
+  let numFeatures = selectedShapValues[0].shap.length;
   $: filteredSelectedShapValues = $filteredIndices
     .map((i) => selectedShapValues[i])
     .sort((a, b) => descending(a.shapAbsSum, b.shapAbsSum));
 
-  function featureAbsContribution(instances) {
-    let colTotSum = new Array($features.length).fill(0);
-    for (let i = 0; i < instances.length; i++) {
-      for (let j = 0; j < $features.length; j++) {
-        colTotSum[j] = colTotSum[j] + Math.abs(instances[i][j]);
-      }
+  function featureOrdering(selectedShapValues) {
+    let column_sum = new Array(features.length).fill(0);
+    for (let i = 0; i < numFeatures; i++) {
+      column_sum[i] = sum(selectedShapValues, (d) => d.shap[i]);
     }
-    return colTotSum;
+    return column_sum
+      .map((d, i) => {
+        return { value: d, index: i };
+      })
+      .sort((a, b) => b.value - a.value)
+      .map((d) => d.index);
+  }
+
+  function permutation(v, index) {
+    let result = index.map((i) => v[i]);
+    return result;
   }
 
   $: shapVar = filteredSelectedShapValues.map((d) => d.shap);
@@ -32,6 +40,8 @@
   $: color = scaleDiverging()
     .domain([-absMaxShap, 0, absMaxShap])
     .interpolator(interpolateRdYlGn);
+
+  let cur_perm = featureOrdering(selectedShapValues);
 </script>
 
 <div>
@@ -68,16 +78,20 @@
     <table>
       <thead>
         <tr>
-          {#each $features as f}
+          {#each permutation($features, cur_perm) as f}
             <th>{f}</th>
           {/each}
         </tr>
       </thead>
       <tbody>
-        {#each $rows as row}
+        {#each $rows as row, rowIndex}
           <tr>
-            {#each $features as f, i}
-              <td style:background={color(row[i])}>{defaultFormat(row[i])}</td>
+            {#each permutation(row, cur_perm) as f, columnIndex}
+              <!-- svelte-ignore a11y-click-events-have-key-events -->
+              <td style:background={color(f)} on:click={() => console.log(row)}>
+                {defaultFormat(f)}
+                <!--(row[columnIndex])-->
+              </td>
             {/each}
           </tr>
         {/each}

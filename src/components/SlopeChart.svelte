@@ -8,7 +8,8 @@
   } from '../stores';
   import { scaleLinear, scalePoint } from 'd3-scale';
   import { getFilteredIndices } from '../utils';
-
+  import { shap1, shap2, shapD, features, filteredIndices } from '../stores';
+  let selectedShapValues = $shapD;
   export let width: number;
   export let height: number;
 
@@ -31,12 +32,17 @@
     [-Infinity, Infinity],
     $predictions
   );
+
+  function handleClick(i: number) {
+    console.log(`Values of row ${i}:`, selectedShapValues[i].shap);
+  }
 </script>
 
 <svg {width} {height}>
   <!-- lines -->
   <g>
     {#each linesToShow as i}
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
       <line
         x1={x(0)}
         x2={x(1)}
@@ -45,6 +51,7 @@
         fill="none"
         stroke={'grey'}
         opacity={'0.5'}
+        on:click={(event) => handleClick(i)}
       />
     {/each}
   </g>
@@ -100,4 +107,7 @@
 </svg>
 
 <style>
+  line {
+    pointer-events: visible;
+  }
 </style>
