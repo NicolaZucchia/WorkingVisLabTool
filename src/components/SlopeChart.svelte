@@ -9,7 +9,13 @@
   import { scaleLinear, scalePoint } from 'd3-scale';
   import { getFilteredIndices } from '../utils';
   import { shap1, shap2, shapD, features, filteredIndices } from '../stores';
+  import { select } from 'd3-selection';
+  import { schemeDark2 } from 'd3';
+  import { onMount } from 'svelte';
+  import * as d3 from 'd3';
   let selectedShapValues = $shapD;
+  let gBrush;
+  let gLines;
   export let width: number;
   export let height: number;
 
@@ -33,14 +39,48 @@
     $predictions
   );
 
+  //$: gBrush = select('#brush').node();
+
   function handleClick(i: number) {
     console.log(`Values of row ${i}:`, selectedShapValues[i].shap);
   }
+
+  function handleBrush(selection) {
+    let max = y.invert(selection[0]);
+    let min = y.invert(selection[1]);
+    d3.select(gLines)
+      .selectAll('line')
+      .each(function () {
+        console.log(this.leftValue);
+      });
+    /*.each(function () {
+        let v = d3.select(this).property('leftValue');
+        console.log(v);
+        if (v >= min && v <= max) {
+          d3.select(this).attr('stroke', 'red');
+        } else {
+          d3.select(this).attr('stroke', 'grey');
+        }
+      });*/
+  }
+
+  $: brush = d3
+    .brushY()
+    .extent([
+      [0, 0],
+      [50, 600],
+    ])
+    .on('brush', (e) => handleBrush(e.selection));
+
+  onMount(() => {
+    d3.select(gBrush) //.attr('width', width).attr('height', height)
+      .call(brush);
+  });
 </script>
 
 <svg {width} {height}>
   <!-- lines -->
-  <g>
+  <g bind:this={gLines}>
     {#each linesToShow as i}
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <line
@@ -104,6 +144,8 @@
       </g>
     {/each}
   </g>
+
+  <g bind:this={gBrush} id="brush" {width} {height} />
 </svg>
 
 <style>
