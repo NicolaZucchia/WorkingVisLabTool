@@ -46,12 +46,25 @@
   }
 
   function handleBrush(selection) {
+    console.log(selection);
+    if (selection === null) {
+      d3.select(gLines)
+        .selectAll('line')
+        .each(function (d, i) {
+          d3.select(this).attr('stroke', 'grey');
+        });
+      return;
+    }
     let max = y.invert(selection[0]);
     let min = y.invert(selection[1]);
     d3.select(gLines)
       .selectAll('line')
-      .each(function () {
-        console.log(this.leftValue);
+      .each(function (d, i) {
+        if ($predictions[0][i] >= min && $predictions[0][i] <= max) {
+          d3.select(this).attr('stroke', 'red');
+        } else {
+          d3.select(this).attr('stroke', 'grey');
+        }
       });
     /*.each(function () {
         let v = d3.select(this).property('leftValue');
@@ -70,7 +83,8 @@
       [0, 0],
       [50, 600],
     ])
-    .on('brush', (e) => handleBrush(e.selection));
+    //.on('brush', (e) => handleBrush(e.selection))
+    .on('end', (e) => handleBrush(e.selection));
 
   onMount(() => {
     d3.select(gBrush) //.attr('width', width).attr('height', height)
