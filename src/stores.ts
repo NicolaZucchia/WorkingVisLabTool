@@ -66,6 +66,8 @@ export let filteredIndices: Writable<number[]>;
 export let minPredictionDifference: Writable<number>;
 export let model1BrushedExtent: Writable<[number, number]>;
 export let model2BrushedExtent: Writable<[number, number]>;
+export let gt: Writable<number[]>;
+export let minDiffFromTruth: Writable<number>;
 
 /**
  * Note that when the cell containing the widget is re-run, a new model is
@@ -113,4 +115,10 @@ export function setStores(model: DOMWidgetModel): void {
   minPredictionDifference = writable(0);
   model1BrushedExtent = writable([-Infinity,Infinity])
   model2BrushedExtent = writable([-Infinity,Infinity]);
+  gt = createSyncedWidget<number[]>(
+    'gt',
+    [],
+    model
+  );
+  minDiffFromTruth = writable(0);
 }

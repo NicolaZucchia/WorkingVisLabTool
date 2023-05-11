@@ -30,6 +30,7 @@ export class ExampleModel extends DOMWidgetModel {
       shap2: [],
       shapD: [],
       features: [],
+      gt: [],
     };
   }
 

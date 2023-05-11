@@ -110,11 +110,25 @@
     border-collapse: separate;
     border-spacing: 0;
     width: 100%;
+    table-layout: fixed;
   }
-  th,
+  th {
+    padding: 0.125em 0.25em;
+  }
   td {
     text-align: right;
     padding: 0.125em 0.25em;
+  }
+  th {
+    writing-mode: vertical-lr;
+    transform: rotate(-180deg);
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  td {
+    font-size: 0;
   }
   .table-container {
     overflow-x: auto;

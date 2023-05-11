@@ -5,17 +5,20 @@
     maxPrediction,
     size,
     minPredictionDifference,
+    minDiffFromTruth,
+    gt,
+    model1BrushedExtent,
+    model2BrushedExtent,
   } from '../stores';
   import { scaleLinear, scalePoint } from 'd3-scale';
   import { getFilteredIndices } from '../utils';
-  import { shap1, shap2, shapD, features, filteredIndices } from '../stores';
+  import { shapD, filteredIndices } from '../stores';
   import { select } from 'd3-selection';
-  import { schemeDark2 } from 'd3';
   import { onMount } from 'svelte';
-  import * as d3 from 'd3';
+  import { brushY } from 'd3-brush';
+  import type { Selection } from 'd3-selection';
+  import type { D3BrushEvent } from 'd3-brush';
   let selectedShapValues = $shapD;
-  let gBrush;
-  let gLines;
   export let width: number;
   export let height: number;
 
@@ -36,6 +39,8 @@
     $minPredictionDifference,
     [-Infinity, Infinity],
     [-Infinity, Infinity],
+    $minDiffFromTruth,
+    $gt,
     $predictions
   );
 
@@ -45,125 +50,132 @@
     console.log(`Values of row ${i}:`, selectedShapValues[i].shap);
   }
 
-  function handleBrush(selection) {
-    console.log(selection);
+  function handleBrush(
+    this: SVGGElement,
+    { selection }: D3BrushEvent<undefined>
+  ) {
+    const isModel1 = this.id === 'model1-axis';
     if (selection === null) {
-      d3.select(gLines)
-        .selectAll('line')
-        .each(function (d, i) {
-          d3.select(this).attr('stroke', 'grey');
-        });
-      return;
+      if (isModel1) {
+        $model1BrushedExtent = [-Infinity, Infinity];
+      } else {
+        $model2BrushedExtent = [-Infinity, Infinity];
+      }
+    } else {
+      const [y1, y2] = selection as [number, number];
+      const max = y.invert(y1);
+      const min = y.invert(y2);
+      if (isModel1) {
+        $model1BrushedExtent = [min, max];
+      } else {
+        $model2BrushedExtent = [min, max];
+      }
     }
-    let max = y.invert(selection[0]);
-    let min = y.invert(selection[1]);
-    d3.select(gLines)
-      .selectAll('line')
-      .each(function (d, i) {
-        if ($predictions[0][i] >= min && $predictions[0][i] <= max) {
-          d3.select(this).attr('stroke', 'red');
-        } else {
-          d3.select(this).attr('stroke', 'grey');
-        }
-      });
-    /*.each(function () {
-        let v = d3.select(this).property('leftValue');
-        console.log(v);
-        if (v >= min && v <= max) {
-          d3.select(this).attr('stroke', 'red');
-        } else {
-          d3.select(this).attr('stroke', 'grey');
-        }
-      });*/
+    $filteredIndices = getFilteredIndices(
+      $size,
+      $minPredictionDifference,
+      $model1BrushedExtent,
+      $model2BrushedExtent,
+      $minDiffFromTruth,
+      $gt,
+      $predictions
+    );
   }
 
-  $: brush = d3
-    .brushY()
+  const brushWidth = 20;
+  $: brush = brushY<undefined>()
     .extent([
-      [0, 0],
-      [50, 600],
+      [-brushWidth / 2, margin.top],
+      [brushWidth / 2, height - margin.bottom],
     ])
     //.on('brush', (e) => handleBrush(e.selection))
-    .on('end', (e) => handleBrush(e.selection));
+    .on('start brush end', handleBrush);
 
-  onMount(() => {
-    d3.select(gBrush) //.attr('width', width).attr('height', height)
-      .call(brush);
-  });
+  let group: SVGGElement | undefined = undefined;
+  let selection: Selection<SVGGElement, undefined, SVGElement, undefined>;
+
+  $: if (group && brush) {
+    selection = select(group).selectAll('.axis');
+    selection.call(brush);
+  }
 </script>
 
 <svg {width} {height}>
-  <!-- lines -->
-  <g bind:this={gLines}>
-    {#each linesToShow as i}
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <line
-        x1={x(0)}
-        x2={x(1)}
-        y1={y($predictions[0][i])}
-        y2={y($predictions[1][i])}
-        fill="none"
-        stroke={'grey'}
-        opacity={'0.5'}
-        on:click={(event) => handleClick(i)}
-      />
-    {/each}
-  </g>
+  <g bind:this={group}>
+    <!-- lines -->
+    <g>
+      {#each linesToShow as i}
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <line
+          x1={x(0)}
+          x2={x(1)}
+          y1={y($predictions[0][i])}
+          y2={y($predictions[1][i])}
+          fill="none"
+          stroke={$filteredIndices.includes(i) ? 'steelblue' : 'grey'}
+          opacity={'0.1'}
+          on:click={(event) => handleClick(i)}
+        />
+      {/each}
+    </g>
 
-  <!-- x axis -->
-  <g transform="translate(0,{height - margin.bottom})">
-    {#each ['Model 1', 'Model 2'] as tick, i}
-      <g transform="translate({x(i)})">
-        <line y1={0} y2={tickSize} stroke="black" />
-        <text
-          y={tickSize + 2}
-          text-anchor="middle"
-          dominant-baseline="hanging"
-          font-size="12"
-        >
-          {tick}
-        </text>
-      </g>
-    {/each}
-  </g>
+    <!-- x axis -->
+    <g transform="translate(0,{height - margin.bottom})">
+      {#each ['Model 1', 'Model 2'] as tick, i}
+        <g transform="translate({x(i)})">
+          <line y1={0} y2={tickSize} stroke="black" />
+          <text
+            y={tickSize + 2}
+            text-anchor="middle"
+            dominant-baseline="hanging"
+            font-size="12"
+            fill="black"
+          >
+            {tick}
+          </text>
+        </g>
+      {/each}
+    </g>
 
-  <!-- y axis -->
-  <g transform="translate({margin.left})">
-    {#each y.ticks() as tick}
-      <g transform="translate(0,{y(tick)})">
-        <line x1={0} x2={-tickSize} stroke="black" />
-        <text
-          x={-tickSize - 2}
-          text-anchor="end"
-          dominant-baseline="middle"
-          font-size="12"
-        >
-          {tick}
-        </text>
-      </g>
-    {/each}
+    <!-- y axis -->
+    <g class="axis" id="model1-axis" transform="translate({margin.left})">
+      {#each y.ticks() as tick}
+        <g transform="translate(0,{y(tick)})">
+          <line x1={0} x2={-tickSize} stroke="black" />
+          <text
+            x={-tickSize - 2}
+            text-anchor="end"
+            dominant-baseline="middle"
+            font-size="12"
+            fill="black"
+          >
+            {tick}
+          </text>
+        </g>
+      {/each}
+    </g>
+    <g
+      class="axis"
+      id="model2-axis"
+      transform="translate({width - margin.right})"
+    >
+      {#each y.ticks() as tick}
+        <g transform="translate(0,{y(tick)})">
+          <line x1={0} x2={tickSize} stroke="black" />
+          <text
+            x={tickSize + 2}
+            text-anchor="start"
+            dominant-baseline="middle"
+            font-size="12"
+            fill="black"
+          >
+            {tick}
+          </text>
+        </g>
+      {/each}
+    </g>
   </g>
-  <g transform="translate({width - margin.right})">
-    {#each y.ticks() as tick}
-      <g transform="translate(0,{y(tick)})">
-        <line x1={0} x2={tickSize} stroke="black" />
-        <text
-          x={tickSize + 2}
-          text-anchor="start"
-          dominant-baseline="middle"
-          font-size="12"
-        >
-          {tick}
-        </text>
-      </g>
-    {/each}
-  </g>
-
-  <g bind:this={gBrush} id="brush" {width} {height} />
 </svg>
 
 <style>
-  line {
-    pointer-events: visible;
-  }
 </style>

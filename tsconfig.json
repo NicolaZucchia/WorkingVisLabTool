@@ -14,12 +14,17 @@
     "rootDir": "src",
     "strict": true,
     "strictPropertyInitialization": false,
-    "types": ["svelte", "node"]
+    "types": [
+      "svelte",
+      "node"
+    ]
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.svelte"
   ],
-  "exclude": ["src/**/__tests__"]
+  "exclude": [
+    "src/**/__tests__"
+  ]
 }

@@ -8,16 +8,16 @@
 </script>
 
 <div class="svelte-widget-container" style:height="{$height}px">
-  <div class="filter-and-table">
-    <Filter />
-    <ShapTable />
-  </div>
   <div
     class="slope-chart"
     bind:clientWidth={slopeChartWidth}
     bind:clientHeight={slopeChartHeight}
   >
     <SlopeChart width={slopeChartWidth} height={slopeChartHeight} />
+  </div>
+  <div class="filter-and-table">
+    <Filter />
+    <ShapTable />
   </div>
 </div>
 

@@ -33,9 +33,10 @@ class ExampleWidget(DOMWidget):
     shap2 = List([]).tag(sync=True)
     shapD = List([]).tag(sync=True)
     features = List([]).tag(sync=True)
+    gt = List([]).tag(sync=True)
 
 
-    def __init__(self, df, model1, model2, height=600, **kwargs):
+    def __init__(self, df, gt, model1, model2, height=600, **kwargs):
         super().__init__(**kwargs)
 
         self.df = df
@@ -45,5 +46,6 @@ class ExampleWidget(DOMWidget):
         self.model1 = model1
         self.model2 = model2
         self.predictions = getPredictions(self.model1, self.model2, self.df)
+        self.gt = gt.to_list()
         self.shap1, self.shap2, self.shapD = calculateShaps(model1, model2, df)
         self.features = list(df.columns)
