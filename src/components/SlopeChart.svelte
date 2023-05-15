@@ -14,10 +14,10 @@
   import { getFilteredIndices } from '../utils';
   import { shapD, filteredIndices } from '../stores';
   import { select } from 'd3-selection';
-  import { onMount } from 'svelte';
   import { brushY } from 'd3-brush';
   import type { Selection } from 'd3-selection';
   import type { D3BrushEvent } from 'd3-brush';
+  import { max } from 'd3-array';
   let selectedShapValues = $shapD;
   export let width: number;
   export let height: number;
@@ -44,10 +44,34 @@
     $predictions
   );
 
+  function getDiffFromGT(predictions: number[], gt: number[]): number[] {
+    let vecDist = [];
+    for (let i = 0; i < gt.length; i++) {
+      vecDist.push(predictions[i] - gt[i]);
+    }
+    return vecDist;
+  }
+
+  $: vecDist0 = getDiffFromGT($predictions[0], $gt);
+  $: vecDist1 = getDiffFromGT($predictions[1], $gt);
+
+  $: maxDistGT = Math.max(
+    max(vecDist0, Math.abs) ?? 0,
+    max(vecDist1, Math.abs) ?? 0
+  );
+
+  $: lengthScale = scaleLinear().domain([0, maxDistGT]).range([0, 40]);
+
+  function getLineLength(value) {
+    return lengthScale(Math.abs(value));
+  }
+
   //$: gBrush = select('#brush').node();
 
   function handleClick(i: number) {
     console.log(`Values of row ${i}:`, selectedShapValues[i].shap);
+    console.log('Ground truth for that:', $gt[i]);
+    console.log('Prediction for that:', $predictions[0][i], $predictions[1][i]);
   }
 
   function handleBrush(
@@ -115,6 +139,29 @@
           stroke={$filteredIndices.includes(i) ? 'steelblue' : 'grey'}
           opacity={'0.1'}
           on:click={(event) => handleClick(i)}
+        />
+      {/each}
+    </g>
+    <g>
+      {#each linesToShow as i}
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <line
+          x1={x(0) - getLineLength(vecDist0[i])}
+          x2={x(0)}
+          y1={y($predictions[0][i])}
+          y2={y($predictions[0][i])}
+          fill="none"
+          stroke={vecDist0[i] > 0 ? 'green' : 'red'}
+          opacity={'0.2'}
+        />
+        <line
+          x1={x(1)}
+          x2={x(1) + getLineLength(vecDist1[i])}
+          y1={y($predictions[1][i])}
+          y2={y($predictions[1][i])}
+          fill="none"
+          stroke={vecDist1[i] > 0 ? 'green' : 'red'}
+          opacity={'0.2'}
         />
       {/each}
     </g>
