@@ -137,7 +137,7 @@
           y2={y($predictions[1][i])}
           fill="none"
           stroke={$filteredIndices.includes(i) ? 'steelblue' : 'grey'}
-          opacity={'0.1'}
+          opacity={'0.8'}
           on:click={(event) => handleClick(i)}
         />
       {/each}
@@ -152,7 +152,7 @@
           y2={y($predictions[0][i])}
           fill="none"
           stroke={vecDist0[i] > 0 ? 'green' : 'red'}
-          opacity={'0.2'}
+          opacity={'0.8'}
         />
         <line
           x1={x(1)}
@@ -161,7 +161,7 @@
           y2={y($predictions[1][i])}
           fill="none"
           stroke={vecDist1[i] > 0 ? 'green' : 'red'}
-          opacity={'0.2'}
+          opacity={'0.8'}
         />
       {/each}
     </g>

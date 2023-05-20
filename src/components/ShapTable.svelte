@@ -79,7 +79,7 @@
       <thead>
         <tr>
           {#each permutation($features, cur_perm) as f}
-            <th>{f}</th>
+            <th class="long-string" title={f}>{f}</th>
           {/each}
         </tr>
       </thead>
@@ -112,35 +112,41 @@
     width: 100%;
     table-layout: fixed;
   }
+
   th {
     padding: 0.125em 0.25em;
-  }
-  td {
-    text-align: right;
-    padding: 0.125em 0.25em;
-  }
-  th {
     writing-mode: vertical-lr;
     transform: rotate(-180deg);
-    max-width: 100px;
+    max-height: 5em;
+    max-width: 50px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    overflow-wrap: break-word;
+    font-weight: normal;
   }
+
   td {
+    text-align: right;
+    padding: 0.125em 0.25em;
     font-size: 0;
   }
+
+  .long-string {
+    max-width: 100%;
+    overflow: hidden;
+  }
+
   .table-container {
     overflow-x: auto;
   }
+
   footer {
     height: 48px;
     padding: 0 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
-  footer {
     border-top: 1px solid #e0e0e0;
   }
 </style>
