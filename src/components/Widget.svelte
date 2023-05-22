@@ -40,6 +40,6 @@
   }
   .slope-chart {
     flex: 1;
-    height: 100%;
+    height: 90%;
   }
 </style>
