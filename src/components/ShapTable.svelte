@@ -5,7 +5,7 @@
   import { scaleDiverging } from 'd3-scale';
   import { max } from 'd3-array';
   //import { interpolateRdYlGn } from 'd3-scale-chromatic';
-  import { interpolateCool, interpolateWarm } from 'd3-scale-chromatic';
+  import { interpolatePuOr } from 'd3-scale-chromatic';
   import RowCount from './RowCount.svelte';
   import Pagination from './Pagination.svelte';
   import Filter from './Filter.svelte';
