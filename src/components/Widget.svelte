@@ -13,10 +13,10 @@
     bind:clientWidth={slopeChartWidth}
     bind:clientHeight={slopeChartHeight}
   >
+    <Filter />
     <SlopeChart width={slopeChartWidth} height={slopeChartHeight} />
   </div>
   <div class="filter-and-table">
-    <Filter />
     <ShapTable />
   </div>
 </div>
@@ -40,6 +40,6 @@
   }
   .slope-chart {
     flex: 1;
-    height: 100%;
+    height: 90%;
   }
 </style>

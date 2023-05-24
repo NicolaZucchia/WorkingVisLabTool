@@ -4,7 +4,8 @@
   import { defaultFormat } from '../vis-utils.ts';
   import { scaleDiverging } from 'd3-scale';
   import { max } from 'd3-array';
-  import { interpolateRdYlGn } from 'd3-scale-chromatic';
+  //import { interpolateRdYlGn } from 'd3-scale-chromatic';
+  import { interpolatePuOr } from 'd3-scale-chromatic';
   import RowCount from './RowCount.svelte';
   import Pagination from './Pagination.svelte';
   import Filter from './Filter.svelte';
@@ -18,7 +19,7 @@
   function featureOrdering(selectedShapValues) {
     let column_sum = new Array(features.length).fill(0);
     for (let i = 0; i < numFeatures; i++) {
-      column_sum[i] = sum(selectedShapValues, (d) => d.shap[i]);
+      column_sum[i] = sum(selectedShapValues, (d) => Math.abs(d.shap[i]));
     }
     return column_sum
       .map((d, i) => {
@@ -34,46 +35,69 @@
   }
 
   $: shapVar = filteredSelectedShapValues.map((d) => d.shap);
-  $: handler = new DataHandler(shapVar, { rowsPerPage: 15 });
+  $: handler = new DataHandler(shapVar, { rowsPerPage: 20 });
   $: rows = handler.getRows();
   $: absMaxShap = max(shapVar.flat(), (d) => Math.abs(d)) ?? 0;
   $: color = scaleDiverging()
     .domain([-absMaxShap, 0, absMaxShap])
-    .interpolator(interpolateRdYlGn);
+    .range(['#00BFFF', '#FFFFE0', '#FFA07A']);
 
   let cur_perm = featureOrdering(selectedShapValues);
 </script>
 
 <div>
-  <div>
-    <label>
-      <input
-        type="radio"
-        bind:group={selectedShapValues}
-        name="shapD"
-        value={$shapD}
-      />
-      Shap Difference
-    </label>
-    <label>
-      <input
-        type="radio"
-        bind:group={selectedShapValues}
-        name="shap1"
-        value={$shap1}
-      />
-      Shap Model 1
-    </label>
-    <label>
-      <input
-        type="radio"
-        bind:group={selectedShapValues}
-        name="shap2"
-        value={$shap2}
-      />
-      Shap Model 2
-    </label>
+  <div style="display: flex;">
+    <div style="margin-right: 10px;">
+      <label>
+        <input
+          type="radio"
+          bind:group={selectedShapValues}
+          name="shapD"
+          value={$shapD}
+        />
+        ShapDiff
+      </label>
+      <label>
+        <input
+          type="radio"
+          bind:group={selectedShapValues}
+          name="shap1"
+          value={$shap1}
+        />
+        ShapM1
+      </label>
+      <label>
+        <input
+          type="radio"
+          bind:group={selectedShapValues}
+          name="shap2"
+          value={$shap2}
+        />
+        ShapM2
+      </label>
+    </div>
+    <div style="display: flex;">
+      <div style="display: flex; align-items: center;">
+        <span
+          style="background-color: #00BFFF; width: 20px; height: 20px; margin-right: 5px;"
+        />
+        <span>1</span>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <span
+          style="background-color: #FFFFE0; width: 20px; height: 20px; margin-right: 5px;"
+        />
+        <span>0</span>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <span
+          style="background-color: #FFA07A; width: 20px; height: 20px; margin-right: 5px;"
+        />
+        <span>-1</span>
+      </div>
+    </div>
   </div>
+
   <div class="table-container">
     <table>
       <thead>
@@ -88,7 +112,10 @@
           <tr>
             {#each permutation(row, cur_perm) as f, columnIndex}
               <!-- svelte-ignore a11y-click-events-have-key-events -->
-              <td style:background={color(f)} on:click={() => console.log(row)}>
+              <td
+                style="background-color: {color(f)}"
+                on:click={() => console.log(row)}
+              >
                 {defaultFormat(f)}
                 <!--(row[columnIndex])-->
               </td>
@@ -128,8 +155,9 @@
 
   td {
     text-align: right;
-    padding: 0.125em 0.25em;
+    padding: 0.0625em 0.125em; /* Adjusted padding for smaller cell size */
     font-size: 0;
+    height: 1em; /* Added to control cell height */
   }
 
   .long-string {

@@ -29,14 +29,16 @@
   }
 </script>
 
-<div>
-  <label>
-    Difference
-    <input type="number" bind:value={difference} />
+<div style="display: flex; align-items: center;">
+  <label style="margin-right: 5px;">
+    DiffInPredictions
+    <input type="number" bind:value={difference} style="margin-left: 5px;" />
   </label>
-  <label>
+  <label style="margin-right: 5px;">
     DiffFromTruth
-    <input type="number" bind:value={diffFromTruth} />
+    <input type="number" bind:value={diffFromTruth} style="margin-left: 5px;" />
   </label>
-  <button on:click={onFilter}> Filter </button>
+  <button on:click={onFilter} style="padding-left: 10px; padding-right: 10px;"
+    >Filter</button
+  >
 </div>

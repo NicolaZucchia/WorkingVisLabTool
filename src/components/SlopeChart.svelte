@@ -122,6 +122,20 @@
     selection = select(group).selectAll('.axis');
     selection.call(brush);
   }
+
+  function calculateOpacity(value) {
+    if (value < 100) {
+      return 0.8;
+    } else if (value < 500) {
+      return 0.6;
+    } else if (value < 1000) {
+      return 0.4;
+    } else if (value < 10000) {
+      return 0.2;
+    } else {
+      return 1;
+    }
+  }
 </script>
 
 <svg {width} {height}>
@@ -152,7 +166,7 @@
           y2={y($predictions[0][i])}
           fill="none"
           stroke={vecDist0[i] > 0 ? 'green' : 'red'}
-          opacity={'0.8'}
+          opacity={calculateOpacity($filteredIndices.length)}
         />
         <line
           x1={x(1)}
@@ -161,7 +175,7 @@
           y2={y($predictions[1][i])}
           fill="none"
           stroke={vecDist1[i] > 0 ? 'green' : 'red'}
-          opacity={'0.8'}
+          opacity={calculateOpacity($filteredIndices.length)}
         />
       {/each}
     </g>

@@ -36,7 +36,7 @@ class ExampleWidget(DOMWidget):
     gt = List([]).tag(sync=True)
 
 
-    def __init__(self, df, gt, model1, model2, height=600, **kwargs):
+    def __init__(self, df, gt, model1, model2, height=800, **kwargs):
         super().__init__(**kwargs)
 
         self.df = df
