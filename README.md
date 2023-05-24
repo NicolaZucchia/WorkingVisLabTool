@@ -7,7 +7,7 @@ This is an updated example of using [Svelte](https://svelte.dev) in a custom Jup
 
 Create a dev environment:
 ```bash
-conda create -n svelte-widget -c conda-forge nodejs yarn python jupyterlab
+conda create -n svelte-widget -c conda-forge nodejs yarn python jupyterlab notebook "pyzmq<25" "jupyter_client<8"
 conda activate svelte-widget
 ```
 

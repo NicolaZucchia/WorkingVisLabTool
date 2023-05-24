@@ -34,7 +34,9 @@ classifiers = [
 dependencies = [
     "ipywidgets>=7.0.0",
     "pandas",
-    "numpy",
+    "numpy<1.24",
+    "scipy",
+    "shap",
 ]
 version = "0.1.0.dev0"
 
@@ -49,7 +51,11 @@ docs = [
     "sphinx>=1.5",
     "sphinx_rtd_theme",
 ]
-examples = []
+examples = [
+    "xgboost",
+    "tensorflow",
+    "scikit-learn"
+]
 test = [
     "pytest-cov",
     "pytest>=6.0",
