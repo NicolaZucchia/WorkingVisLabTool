@@ -4,7 +4,8 @@
     size,
     filteredIndices,
     minPredictionDifference,
-    minDiffFromTruth,
+    minDiffFromTruth1,
+    minDiffFromTruth2,
     model1BrushedExtent,
     model2BrushedExtent,
     gt,
@@ -12,17 +13,20 @@
   import { getFilteredIndices } from '../utils';
 
   let difference = 0;
-  let diffFromTruth = 0;
+  let diffFromTruth1 = 0;
+  let diffFromTruth2 = 0;
 
   function onFilter() {
     $minPredictionDifference = difference;
-    $minDiffFromTruth = diffFromTruth;
+    $minDiffFromTruth1 = diffFromTruth1;
+    $minDiffFromTruth2 = diffFromTruth2;
     $filteredIndices = getFilteredIndices(
       $size,
       $minPredictionDifference,
       $model1BrushedExtent,
       $model2BrushedExtent,
-      $minDiffFromTruth,
+      $minDiffFromTruth1,
+      $minDiffFromTruth2,
       $gt,
       $predictions
     );
@@ -32,13 +36,33 @@
 <div style="display: flex; align-items: center;">
   <label style="margin-right: 5px;">
     DiffInPredictions
-    <input type="number" bind:value={difference} style="margin-left: 5px;" />
+    <input
+      type="number"
+      bind:value={difference}
+      style="margin-left: 5px; width: 50%;"
+    />
   </label>
   <label style="margin-right: 5px;">
-    DiffFromTruth
-    <input type="number" bind:value={diffFromTruth} style="margin-left: 5px;" />
+    DiffFromTruth1 DiffFromTruth2
+    <div style="display: flex;">
+      <input
+        type="number"
+        bind:value={diffFromTruth1}
+        style="margin-left: 5px; width: 50%;"
+      />
+      <input
+        type="number"
+        bind:value={diffFromTruth2}
+        style="margin-left: 5px; width: 50%;"
+      />
+    </div>
   </label>
-  <button on:click={onFilter} style="padding-left: 10px; padding-right: 10px;"
-    >Filter</button
-  >
+  <label>
+    <button
+      on:click={onFilter}
+      style="padding-left: 10px; padding-right: 10px;"
+    >
+      Filter
+    </button>
+  </label>
 </div>

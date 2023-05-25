@@ -5,7 +5,8 @@
     maxPrediction,
     size,
     minPredictionDifference,
-    minDiffFromTruth,
+    minDiffFromTruth1,
+    minDiffFromTruth2,
     gt,
     model1BrushedExtent,
     model2BrushedExtent,
@@ -39,7 +40,8 @@
     $minPredictionDifference,
     [-Infinity, Infinity],
     [-Infinity, Infinity],
-    $minDiffFromTruth,
+    $minDiffFromTruth1,
+    $minDiffFromTruth2,
     $gt,
     $predictions
   );
@@ -100,7 +102,8 @@
       $minPredictionDifference,
       $model1BrushedExtent,
       $model2BrushedExtent,
-      $minDiffFromTruth,
+      $minDiffFromTruth1,
+      $minDiffFromTruth2,
       $gt,
       $predictions
     );

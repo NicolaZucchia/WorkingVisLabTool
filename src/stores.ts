@@ -67,7 +67,8 @@ export let minPredictionDifference: Writable<number>;
 export let model1BrushedExtent: Writable<[number, number]>;
 export let model2BrushedExtent: Writable<[number, number]>;
 export let gt: Writable<number[]>;
-export let minDiffFromTruth: Writable<number>;
+export let minDiffFromTruth1: Writable<number>;
+export let minDiffFromTruth2: Writable<number>;
 
 /**
  * Note that when the cell containing the widget is re-run, a new model is
@@ -120,5 +121,6 @@ export function setStores(model: DOMWidgetModel): void {
     [],
     model
   );
-  minDiffFromTruth = writable(0);
+  minDiffFromTruth1 = writable(0);
+  minDiffFromTruth2 = writable(0);
 }
