@@ -1,4 +1,5 @@
 <script>
+  import QuantitativeColorScale from './QuantitativeColorScale.svelte';
   import { DataHandler } from '@vincjo/datatables';
   import { shap1, shap2, shapD, features, filteredIndices } from '../stores';
   import { defaultFormat } from '../vis-utils.ts';
@@ -40,7 +41,7 @@
   $: absMaxShap = max(shapVar.flat(), (d) => Math.abs(d)) ?? 0;
   $: color = scaleDiverging()
     .domain([-absMaxShap, 0, absMaxShap])
-    .range(['#00BFFF', '#FFFFE0', '#FFA07A']);
+    .interpolator(interpolatePuOr);
 
   let cur_perm = featureOrdering(selectedShapValues);
 </script>
@@ -76,25 +77,8 @@
         ShapM2
       </label>
     </div>
-    <div style="display: flex;">
-      <div style="display: flex; align-items: center;">
-        <span
-          style="background-color: #00BFFF; width: 20px; height: 20px; margin-right: 5px;"
-        />
-        <span>1</span>
-      </div>
-      <div style="display: flex; align-items: center;">
-        <span
-          style="background-color: #FFFFE0; width: 20px; height: 20px; margin-right: 5px;"
-        />
-        <span>0</span>
-      </div>
-      <div style="display: flex; align-items: center;">
-        <span
-          style="background-color: #FFA07A; width: 20px; height: 20px; margin-right: 5px;"
-        />
-        <span>-1</span>
-      </div>
+    <div class="quantitative-color-scale">
+      <QuantitativeColorScale width={144} height={30} {color} />
     </div>
   </div>
 

@@ -31,7 +31,7 @@
   $: colorWidth = nonTitleWidth - marginLeft - marginRight;
 
   const spaceBetweenColorAndTickLabel = 2;
-  const tickLabelHeight = 10;
+  const tickLabelHeight = 14;
 
   $: colorHeight = height - tickLabelHeight - spaceBetweenColorAndTickLabel;
 
@@ -83,11 +83,7 @@
   $: ticks = x.ticks(Math.max(Math.min(colorWidth / 50, 10), minDesiredTicks));
 </script>
 
-<div
-  class="color-container"
-  style:height="{height}px"
-  style:max-width="{width}px"
->
+<div class="color-container" style:height="{height}px" style:width="{width}px">
   {#if title !== ''}
     <div class="legend-title">{title}:</div>
   {/if}
