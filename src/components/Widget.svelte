@@ -17,7 +17,7 @@
     <Filter />
     <SlopeChart width={slopeChartWidth} height={slopeChartHeight} />
   </div>
-  <div class="filter-and-table">
+  <div class="table">
     <ShapTable />
     <BoxPlots />
   </div>

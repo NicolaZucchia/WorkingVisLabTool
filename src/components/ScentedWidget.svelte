@@ -1,8 +1,5 @@
 <script lang="ts">
-  import * as d3 from 'd3';
-  import { getBoxPlotsData } from '../../../lib/VisQueries';
-  import XAxis from './XAxis.svelte';
-  import YAxis from './YAxis.svelte';
+  // import ...
 
   export let width: number;
   export let height: number;
@@ -27,7 +24,7 @@
     .nice()
     .range([height - margin.bottom, margin.top]);
 
-  $: queryResults = getBoxPlotsData(xCol);
+  // $: queryResults =  [] ;
 </script>
 
 <svg>

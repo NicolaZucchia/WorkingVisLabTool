@@ -11,6 +11,7 @@
     gt,
   } from '../stores';
   import { getFilteredIndices } from '../utils';
+  import ScentedWidget from './ScentedWidget.svelte';
 
   let difference = 0;
   let diffFromTruth1 = 0;
