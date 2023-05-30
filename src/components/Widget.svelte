@@ -3,6 +3,7 @@
   import SlopeChart from './SlopeChart.svelte';
   import ShapTable from './ShapTable.svelte';
   import { height } from '../stores';
+  import BoxPlots from './BoxPlots.svelte';
   let slopeChartWidth = 0;
   let slopeChartHeight = 0;
 </script>
@@ -18,6 +19,7 @@
   </div>
   <div class="filter-and-table">
     <ShapTable />
+    <BoxPlots />
   </div>
 </div>
 
